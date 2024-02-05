@@ -1,0 +1,22 @@
+services:
+  test:
+    image: buildkite/plugin-tester:latest
+    volumes:
+      - $PWD:/plugin:ro
+
+  format-shell:
+    image: mvdan/shfmt
+    volumes:
+      - $PWD:/data
+    command:
+      - --write
+      - ./data
+
+  lint-shell-format:
+    image: mvdan/shfmt
+    volumes:
+      - $PWD:/data
+    command:
+      - --diff
+      - ./data
+

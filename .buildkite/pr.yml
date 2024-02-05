@@ -1,1 +1,17 @@
-steps: []
+tapendium-aliases:
+  merge-main: &merge-main
+    seek-oss/github-merged-pr#v1.1.2:
+      mode: checkout
+
+steps:
+  - label: ':hammer: Run unit tests'
+    plugins:
+      - *merge-main
+      - docker-compose#v3.9.0:
+          run: test
+
+  - label: ':lint-roller: Check shell script formatting'
+    plugins:
+      - *merge-main
+      - docker-compose#v3.9.0:
+          run: lint-shell-format
