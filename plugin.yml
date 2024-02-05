@@ -1,0 +1,5 @@
+name: Tapendium CI utils 
+description: CI utility functions
+requirements:
+  - aws
+  - jq
