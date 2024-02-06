@@ -3,3 +3,8 @@ description: CI utility functions
 requirements:
   - aws
   - jq
+configuration:
+  properties:
+    debug:
+      type: string
+      description: Enable debug mode

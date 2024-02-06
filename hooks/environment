@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+# From https://github.com/buildkite-plugins/library-example-buildkite-plugin
+set -euo pipefail
+
+HOOKS_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+export PATH="$PATH:$HOOKS_DIR/../bin"

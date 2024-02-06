@@ -2,7 +2,7 @@ services:
   test:
     image: buildkite/plugin-tester:latest
     volumes:
-      - $PWD:/plugin:ro
+      - $PWD:/plugin
 
   format-shell:
     image: mvdan/shfmt
@@ -19,4 +19,3 @@ services:
     command:
       - --diff
       - ./data
-
