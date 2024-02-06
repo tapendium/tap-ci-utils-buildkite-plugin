@@ -1,0 +1,1 @@
+ [{"EventBusName":"arn:aws:events:ap-southeast-2:339712941220:event-bus/default","Source":"service-name","DetailType":"features.updated","Detail":"{\"userId\":\"abc123\",\"effectiveUserId\":\"abc123\",\"data\":{\"service\":\"service-name\",\"features\":[\"service.action.on.V1\",\"service.action.off.V1\",\"service.entity.read.V1\",\"service.entity.update.V1\"]}}"}]
