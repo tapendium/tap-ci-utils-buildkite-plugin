@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+
+set -eo pipefail
+
+if [[ "${BUILDKITE_PLUGIN_TAP_CI_UTILS_DEBUG:-false}" =~ (true|on|1) ]]; then
+	echo "~~~ :hammer: Enabling debug mode"
+	set -x
+fi
+
+# Echo to standard error
+function log {
+	echo "$@" 1>&2
+}
+
+if [ ! -f features.json ]; then
+	echo "features.json not found."
+	exit 1
+fi
+
+declare -a features=()
+readarray -t features < <(jq --compact-output --raw-output '.[]' features.json)
+
+is_error=false
+
+for feature in "${features[@]}"; do
+	if [[ ! $feature =~ ^([a-zA-z0-9]+\.)+V[0-9]+$ ]]; then
+		log "Feature ${feature} does not match expected format."
+		is_error=true
+	fi
+done
+
+if $is_error; then
+	log "One or more features do not match expected format."
+	exit 1
+fi
