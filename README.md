@@ -20,3 +20,11 @@ export PUBLISH_FEATURES_DETAIL_TYPE=features.updated
 
 publish-features
 ```
+
+### validate-features
+
+Validate features.json matches expected format
+
+```bash
+validate-features
+```
