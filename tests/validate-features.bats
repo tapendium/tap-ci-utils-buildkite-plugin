@@ -31,8 +31,8 @@ validate_features=$PWD/bin/validate-features
 @test "validate-features succeeds for valid features" {
 	cat <<-EOF >features.json
 		[
-		  "service.action.off.V1",
-		  "service.entity.read.V1",
+		  "service-a.action.off.V1",
+		  "service_b.entity.read.V1",
 		  "service.entity.update.V1"
 		]
 	EOF

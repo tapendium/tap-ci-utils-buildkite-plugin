@@ -23,7 +23,7 @@ readarray -t features < <(jq --compact-output --raw-output '.[]' features.json)
 is_error=false
 
 for feature in "${features[@]}"; do
-	if [[ ! $feature =~ ^([a-zA-z0-9]+\.)+V[0-9]+$ ]]; then
+	if [[ ! $feature =~ ^([a-zA-z0-9_-]+\.)+V[0-9]+$ ]]; then
 		log "Feature ${feature} does not match expected format."
 		is_error=true
 	fi
