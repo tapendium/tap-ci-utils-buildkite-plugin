@@ -21,8 +21,9 @@ install_npm_packages=$PWD/bin/install-npm-packages
 
 	run $install_npm_packages
 
-	assert_success
 	assert_line "Installing npm packages."
+	assert_file_exist node_modules/cached
+	assert_success
 
 	unstub npm
 }

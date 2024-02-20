@@ -27,5 +27,5 @@ if [ -f node_modules/cached ]; then
 else
 	log "Installing npm packages."
 	npm ci
-	echo $(date) >node_modules/cached
+	date >node_modules/cached
 fi
