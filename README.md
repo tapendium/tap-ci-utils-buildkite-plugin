@@ -40,7 +40,7 @@ steps:
 
 ### install-npm-packages
 
-Install npm packages if node_modules has not bee restored from cache
+Install npm packages if node_modules has not been restored from cache
 
 ```yml
 steps:
