@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+
+set -eo pipefail
+
+if [[ "${BUILDKITE_PLUGIN_TAP_CI_UTILS_DEBUG:-false}" =~ (true|on|1) ]]; then
+	echo "~~~ :hammer: Enabling debug mode"
+	set -x
+fi
+
+# Echo to standard error
+function log {
+	echo "$@" 1>&2
+}
+
+if [ ! -f package-lock.json ]; then
+	log "package-lock.json not found."
+	exit 1
+fi
+
+if [ ! -d node_modules ]; then
+	log "node_modules not found."
+	exit 1
+fi
+
+if [ -f node_modules/cached ]; then
+	log "node_modules restored from cache. Skipping package install."
+else
+	log "Installing npm packages."
+	npm ci
+	date >node_modules/cached
+fi
