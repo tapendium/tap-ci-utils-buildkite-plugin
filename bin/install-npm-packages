@@ -17,11 +17,6 @@ if [ ! -f package-lock.json ]; then
 	exit 1
 fi
 
-if [ ! -d node_modules ]; then
-	log "node_modules not found."
-	exit 1
-fi
-
 if [ -f node_modules/cached ]; then
 	log "node_modules restored from cache. Skipping package install."
 else

@@ -37,16 +37,6 @@ install_npm_packages=$PWD/bin/install-npm-packages
 	assert_line "package-lock.json not found."
 }
 
-@test "install-npm-packages fails if node_modules directory is not found" {
-	rm -r node_modules
-
-	run $install_npm_packages
-
-	assert_failure
-	assert_line "node_modules not found."
-
-}
-
 @test "install-npm-packages skips npm install if marker file exists" {
 	touch node_modules/cached
 
