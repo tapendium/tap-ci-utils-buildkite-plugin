@@ -12,10 +12,10 @@ setup() {
 
 deploy_websocket=$PWD/bin/deploy-websocket
 
-@test "publish-features runs to completion" {
+@test "create-deployment runs to completion" {
 	stub aws "$(cat ./tests/fixtures/create-deployment-args.stub) : cat ./tests/fixtures/put-events-success.json"
 	export MATRIX="test"
-	export API_GATEWAY_WEBSOCKETAPIID="features.updated"
+	export API_GATEWAY_WEBSOCKETAPIID="testApi"
 	export DESCRIPTION="Hello"
 	run $deploy_websocket
 
@@ -25,10 +25,10 @@ deploy_websocket=$PWD/bin/deploy-websocket
 	unstub aws
 }
 
-@test "publish-features handles eventbridge failures" {
+@test "create-deployment handles failures" {
 	stub aws "$(cat ./tests/fixtures/create-deployment-args.stub) : cat ./tests/fixtures/put-events-failure.json"
 	export MATRIX="test"
-	export API_GATEWAY_WEBSOCKETAPIID="features.updated"
+	export API_GATEWAY_WEBSOCKETAPIID="testApi"
 	export DESCRIPTION="Hello"
 	run $deploy_websocket
 
@@ -36,5 +36,4 @@ deploy_websocket=$PWD/bin/deploy-websocket
 	assert_line "Failed to create deploy on API Websocket Gateway"
 
 	unstub aws
-
 }

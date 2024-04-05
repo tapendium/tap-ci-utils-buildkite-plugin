@@ -1,1 +1,1 @@
-aws apigatewayv2 create-deployment --stage-name 'test' --description "Hello-test" --api-id 'testApi'
+apigatewayv2 create-deployment --stage-name test --description Hello-test --api-id testApi
