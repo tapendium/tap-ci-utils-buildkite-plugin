@@ -12,7 +12,7 @@ Publish features.json file to EventBridge
 steps:
   - command: publish-features event_bus_name service_name user_id event_detail_type
     plugins:
-      - tapendium/tap-ci-utils#v0.3.1: ~
+      - tapendium/tap-ci-utils#v0.3.2: ~
 ```
 
 ```yml
@@ -24,7 +24,7 @@ steps:
       PUBLISH_FEATURES_EVENT_USER_ID: userid
       PUBLISH_FEATURES_DETAIL_TYPE: features.updated
     plugins:
-      - tapendium/tap-ci-utils#v0.3.1: ~
+      - tapendium/tap-ci-utils#v0.3.2: ~
 ```
 
 ### validate-features
@@ -35,7 +35,22 @@ Validate features.json matches expected format
 steps:
   - command: validate-features
     plugins:
-      - tapendium/tap-ci-utils#v0.3.1: ~
+      - tapendium/tap-ci-utils#v0.3.2: ~
+```
+
+### Deploy-websocket
+
+Deployed Websocket when updating websocket api
+
+```yml
+steps:
+  - command: deploy-websocket
+    env:
+        MATRIX: maxtrix
+        API_GATEWAY_WEBSOCKETAPIID: apigatewayID
+        DESCRIPTION: description
+    plugins:
+      - tapendium/tap-ci-utils#v0.3.2: ~
 ```
 
 ### install-npm-packages
@@ -48,5 +63,5 @@ steps:
       - cd backend
       - install-npm-packages
     plugins:
-      - tapendium/tap-ci-utils#v0.3.1: ~
+      - tapendium/tap-ci-utils#v0.3.2: ~
 ```
