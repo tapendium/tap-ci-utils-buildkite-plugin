@@ -13,7 +13,7 @@ setup() {
 deploy_websocket=$PWD/bin/deploy-websocket
 
 @test "create-deployment runs to completion" {
-	stub aws "$(cat ./tests/fixtures/create-deployment-args.stub) : cat ./tests/fixtures/put-events-success.json"
+	stub aws "$(cat ./tests/fixtures/create-deployment-args.stub) : cat ./tests/fixtures/create-deployment-success.json"
 	export MATRIX="test"
 	export API_GATEWAY_WEBSOCKETAPIID="testApi"
 	export DESCRIPTION="Hello"
@@ -26,7 +26,7 @@ deploy_websocket=$PWD/bin/deploy-websocket
 }
 
 @test "create-deployment handles failures" {
-	stub aws "$(cat ./tests/fixtures/create-deployment-args.stub) : cat ./tests/fixtures/put-events-failure.json"
+	stub aws "$(cat ./tests/fixtures/create-deployment-args.stub) : cat ./tests/fixtures/create-deployment-failed.json"
 	export MATRIX="test"
 	export API_GATEWAY_WEBSOCKETAPIID="testApi"
 	export DESCRIPTION="Hello"

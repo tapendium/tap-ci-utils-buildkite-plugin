@@ -33,8 +33,10 @@ assert_var description "Argument 3: DESCRIPTION is not set"
 log "Creating deployment on API Websocket Gateway"
 
 response="$(aws apigatewayv2 create-deployment --stage-name "$matrix" --description "$description-$matrix" --api-id "$api_gateway_ws_id")"
-failed_count="$(jq '.FailedEntryCount' <<<"$response")"
-if [ ! "$failed_count" = 0 ]; then
+deployment_status=$(jq -r '.DeploymentStatus' <<<"$response" | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')
+
+# Check if deployment status is "FAILED"
+if [ "$deployment_status" = "FAILED" ]; then
 	log "Failed to create deploy on API Websocket Gateway"
 	log "Error: "
 	log "$response"
