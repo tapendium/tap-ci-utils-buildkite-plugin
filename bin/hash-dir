@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+
+set -eo pipefail
+
+if [[ "${BUILDKITE_PLUGIN_TAP_CI_UTILS_DEBUG:-false}" =~ (true|on|1) ]]; then
+	echo "~~~ :hammer: Enabling debug mode"
+	set -x
+fi
+
+dir_path=${1:?Path is not set}
+
+# Echo to standard error
+function log {
+	echo "$@" 1>&2
+}
+
+if [ ! -d "${dir_path}" ]; then
+	echo "${dir_path} is not a valid directory."
+	exit 1
+fi
+
+find "${dir_path}" -type f -exec md5sum {} \; | sort -k 2 | md5sum | awk '{print $1}'
