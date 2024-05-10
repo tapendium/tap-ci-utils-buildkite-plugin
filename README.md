@@ -12,7 +12,7 @@ Publish features.json file to EventBridge
 steps:
   - command: publish-features event_bus_name service_name user_id event_detail_type
     plugins:
-      - tapendium/tap-ci-utils#v0.3.3: ~
+      - tapendium/tap-ci-utils#v0.4.0: ~
 ```
 
 ```yml
@@ -24,7 +24,7 @@ steps:
       PUBLISH_FEATURES_EVENT_USER_ID: userid
       PUBLISH_FEATURES_DETAIL_TYPE: features.updated
     plugins:
-      - tapendium/tap-ci-utils#v0.3.3: ~
+      - tapendium/tap-ci-utils#v0.4.0: ~
 ```
 
 ### validate-features
@@ -35,7 +35,7 @@ Validate features.json matches expected format
 steps:
   - command: validate-features
     plugins:
-      - tapendium/tap-ci-utils#v0.3.3: ~
+      - tapendium/tap-ci-utils#v0.4.0: ~
 ```
 
 ### Deploy-websocket
@@ -50,7 +50,7 @@ steps:
         API_GATEWAY_WEBSOCKETAPIID: apigatewayID
         DESCRIPTION: description
     plugins:
-      - tapendium/tap-ci-utils#v0.3.3: ~
+      - tapendium/tap-ci-utils#v0.4.0: ~
 ```
 
 ### install-npm-packages
@@ -63,5 +63,17 @@ steps:
       - cd backend
       - install-npm-packages
     plugins:
-      - tapendium/tap-ci-utils#v0.3.3: ~
+      - tapendium/tap-ci-utils#v0.4.0: ~
+```
+
+### hash-dir
+
+Generate a single MD5 hash of a directory and its contents
+
+```yml
+steps:
+  - commands:
+      - hash-dir frontend
+    plugins:
+      - tapendium/tap-ci-utils#v0.4.0: ~
 ```
