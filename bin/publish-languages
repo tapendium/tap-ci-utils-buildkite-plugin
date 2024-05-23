@@ -34,7 +34,7 @@ function assert_var() {
 
 languages_file_path=${PUBLISH_LANGUAGES_FILE_PATH:-"frontend/locale/en.json"}
 
-if [ ! -f ${languages_file_path} ]; then
+if [ ! -f "${languages_file_path}" ]; then
 	echo "${languages_file_path} not found."
 	exit 1
 fi
@@ -44,7 +44,7 @@ event_bus=${1:-"$PUBLISH_LANGUAGES_EVENT_BUS_NAME"}
 service_name=${2:-"$service_name_guess"}
 user_id=${3:-"$PUBLISH_LANGUAGES_EVENT_USER_ID"}
 detail_type=${4:-"$PUBLISH_LANGUAGES_DETAIL_TYPE"}
-languages="$(jq . ${languages_file_path})"
+languages="$(jq . "${languages_file_path}")"
 
 assert_var event_bus "Argument 1: Event bus name missing and PUBLISH_LANGUAGES_EVENT_BUS_NAME is not set"
 assert_var service_name "Argument 2: Service name missing."
@@ -76,7 +76,6 @@ languages_event="$(jq --null-input --compact-output \
 
 log "Publishing languages for service: ${service_name}"
 
-log "$languages_event"
 response="$(aws events put-events --entries "$languages_event" --output json)"
 failed_count="$(jq '.FailedEntryCount' <<<"$response")"
 if [ ! "$failed_count" = 0 ]; then
