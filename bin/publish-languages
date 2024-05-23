@@ -1,0 +1,88 @@
+#!/usr/bin/env bash
+
+set -eo pipefail
+
+if [[ "${BUILDKITE_PLUGIN_TAP_CI_UTILS_DEBUG:-false}" =~ (true|on|1) ]]; then
+	echo "~~~ :hammer: Enabling debug mode"
+	set -x
+fi
+
+function get_service_name() {
+	local repo_url="$BUILDKITE_REPO"
+	local repo
+	repo="$(basename "$repo_url")"
+
+	[[ $repo =~ ^(.+).git$ ]]
+
+	echo "${BASH_REMATCH[1]}"
+}
+
+# Echo to standard error
+function log {
+	echo "$@" 1>&2
+}
+
+# Asserts a variable is set
+function assert_var() {
+	local message
+	message=${2:-"Variable $1 is not set."}
+	if [ -z "${!1:-}" ]; then
+		log "$message"
+		exit 1
+	fi
+}
+
+languages_file_path=${PUBLISH_LANGUAGES_FILE_PATH:-"frontend/locale/en.json"}
+
+if [ ! -f ${languages_file_path} ]; then
+	echo "${languages_file_path} not found."
+	exit 1
+fi
+
+service_name_guess="$(get_service_name)"
+event_bus=${1:-"$PUBLISH_LANGUAGES_EVENT_BUS_NAME"}
+service_name=${2:-"$service_name_guess"}
+user_id=${3:-"$PUBLISH_LANGUAGES_EVENT_USER_ID"}
+detail_type=${4:-"$PUBLISH_LANGUAGES_DETAIL_TYPE"}
+languages="$(jq . ${languages_file_path})"
+
+assert_var event_bus "Argument 1: Event bus name missing and PUBLISH_LANGUAGES_EVENT_BUS_NAME is not set"
+assert_var service_name "Argument 2: Service name missing."
+assert_var user_id "Argument 3: Event user id missing and PUBLISH_LANGUAGES_EVENT_USER_ID is not set"
+assert_var detail_type "Argument 4: Event detail type missing and PUBLISH_LANGUAGES_DETAIL_TYPE is not set"
+
+event_detail="$(jq --null-input --compact-output \
+	--arg service "${service_name}" \
+	--arg userId "${user_id}" \
+	--argjson languages "${languages}" \
+	'{
+     userId: $userId,
+     effectiveUserId: $userId,
+     data: { service: $service, languages: $languages}
+   }')"
+
+languages_event="$(jq --null-input --compact-output \
+	--arg bus "${event_bus}" \
+	--arg service "${service_name}" \
+	--arg type "${detail_type}" \
+	--arg detail "${event_detail}" \
+	'[{
+       EventBusName: $bus,
+       Source: $service,
+       DetailType: $type,
+       Detail: $detail
+     }]
+     ')"
+
+log "Publishing languages for service: ${service_name}"
+
+log "$languages_event"
+response="$(aws events put-events --entries "$languages_event" --output json)"
+failed_count="$(jq '.FailedEntryCount' <<<"$response")"
+if [ ! "$failed_count" = 0 ]; then
+	log "Failed to publish languages to EventBridge"
+	log "Error: "
+	log "$response"
+	exit 1
+fi
+log "Published languages for service: ${service_name}"
