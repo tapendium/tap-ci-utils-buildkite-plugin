@@ -44,6 +44,7 @@ event_bus=${1:-"$PUBLISH_LANGUAGES_EVENT_BUS_NAME"}
 service_name=${2:-"$service_name_guess"}
 user_id=${3:-"$PUBLISH_LANGUAGES_EVENT_USER_ID"}
 detail_type=${4:-"$PUBLISH_LANGUAGES_DETAIL_TYPE"}
+language_code=${PUBLISH_LANGUAGES_LANGUAGE_CODE:-"en"}
 languages="$(jq . "${languages_file_path}")"
 
 assert_var event_bus "Argument 1: Event bus name missing and PUBLISH_LANGUAGES_EVENT_BUS_NAME is not set"
@@ -54,11 +55,12 @@ assert_var detail_type "Argument 4: Event detail type missing and PUBLISH_LANGUA
 event_detail="$(jq --null-input --compact-output \
 	--arg service "${service_name}" \
 	--arg userId "${user_id}" \
+	--arg code "${language_code}" \
 	--argjson languages "${languages}" \
 	'{
      userId: $userId,
      effectiveUserId: $userId,
-     data: { service: $service, languages: $languages}
+     data: { service: $service, code: $code, languages: $languages}
    }')"
 
 languages_event="$(jq --null-input --compact-output \
