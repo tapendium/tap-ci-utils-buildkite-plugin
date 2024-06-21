@@ -107,7 +107,7 @@ steps:
 
 ### publish-npm-package
 
-Bump the version and publish an npm package if the package contents have changed. The default version bump is a "patch" but all version changes supported by npm can be used (npm version)[https://docs.npmjs.com/cli/v10/commands/npm-version]
+Bump the version and publish an npm package if the package contents have changed. The default version bump is a "patch" but all version changes supported by npm can be used [npm version](https://docs.npmjs.com/cli/v10/commands/npm-version)
 
 **Publish a patch version**
 
