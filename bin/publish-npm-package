@@ -1,0 +1,58 @@
+#!/usr/bin/env bash
+
+set -eo pipefail
+
+if [[ "${BUILDKITE_PLUGIN_TAP_CI_UTILS_DEBUG:-false}" =~ (true|on|1) ]]; then
+	echo "~~~ :hammer: Enabling debug mode"
+	set -x
+fi
+
+# Echo to standard error
+function log() {
+	echo "$@" 1>&2
+}
+
+if [ ! -f package.json ]; then
+	log "ERROR: No package.json file found."
+	exit 1
+fi
+
+dry_run=false
+
+# Function to display usage information
+usage() {
+	log "Usage: $0 [-n]"
+	log "  -n      Enable dry run mode"
+}
+
+while getopts ":n" opt; do
+	case "${opt}" in
+	n)
+		dry_run=true
+		;;
+	\?)
+		log "Invalid option: -$OPTARG"
+		usage
+		exit 2
+		;;
+	esac
+done
+shift $((OPTIND - 1))
+
+new_version=${1:-patch}
+package_name="$(npm view . name)"
+remote_hash="$(npm view "${package_name}" dist.shasum 2>/dev/null || echo NOT_FOUND)"
+local_hash="$(npm publish --dry-run --json 2>/dev/null | jq --raw-output '.shasum')"
+if [ "${local_hash}" = "${remote_hash}" ]; then
+	log "Package \"${package_name}\" with shasum ${local_hash} is already published."
+	exit 0
+fi
+
+npm version "${new_version}" &>/dev/null
+
+publish_cmd="npm publish"
+if $dry_run; then
+	publish_cmd+=" --dry-run"
+fi
+
+eval "${publish_cmd}"
