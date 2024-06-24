@@ -17,18 +17,26 @@ if [ ! -f package.json ]; then
 	exit 1
 fi
 
+# Run `npm publish` in dry run mode.
 dry_run=false
+
+# Use remote version of package as base when incrementing version.
+use_remote=false
 
 # Function to display usage information
 usage() {
-	log "Usage: $0 [-n]"
+	log "Usage: $0 [-n] [-r]"
 	log "  -n      Enable dry run mode"
+	log "  -r      Use remote version as base version when incrementing"
 }
 
-while getopts ":n" opt; do
+while getopts ":nr" opt; do
 	case "${opt}" in
 	n)
 		dry_run=true
+		;;
+	r)
+		use_remote=true
 		;;
 	\?)
 		log "Invalid option: -$OPTARG"
@@ -46,6 +54,12 @@ local_hash="$(npm publish --dry-run --json 2>/dev/null | jq --raw-output '.shasu
 if [ "${local_hash}" = "${remote_hash}" ]; then
 	log "Package \"${package_name}\" with shasum ${local_hash} is already published."
 	exit 0
+fi
+
+remote_version="$(npm view "${package_name}" version 2>/dev/null || echo '')"
+if [ -n "$remote_version" ] && $use_remote; then
+	log "Using remote version \"${remote_version}\" as base."
+	npm version "${remote_version}"
 fi
 
 npm version "${new_version}" &>/dev/null
