@@ -4,9 +4,9 @@ setup() {
 	load "$BATS_PLUGIN_PATH/load.bash"
 
 	# Uncomment to enable plugin debugging
-	# export BUILDKITE_PLUGIN_TAP_CI_UTILS_DEBUG=true
-	# export NPM_STUB_DEBUG=/dev/tty
-	# export JQ_STUB_DEBUG=/dev/tty
+	export BUILDKITE_PLUGIN_TAP_CI_UTILS_DEBUG=true
+	export NPM_STUB_DEBUG=/dev/tty
+	export JQ_STUB_DEBUG=/dev/tty
 	touch package.json
 }
 
