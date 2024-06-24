@@ -56,7 +56,7 @@ if [ "${local_hash}" = "${remote_hash}" ]; then
 	exit 0
 fi
 
-remote_version="$(npm view "${package_name}" version 2>/dev/null || echo "")"
+remote_version="$(npm view "${package_name}" version 2>/dev/null || echo '')"
 if [ -n "$remote_version" ] && $use_remote; then
 	log "Using remote version \"${remote_version}\" as base."
 	npm version "${remote_version}"

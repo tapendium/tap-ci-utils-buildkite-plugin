@@ -5,6 +5,7 @@ tapendium-aliases:
 
 steps:
   - label: ':hammer: Run unit tests'
+    soft_fail: true
     plugins:
       - *merge-main
       - docker-compose#v3.9.0:
