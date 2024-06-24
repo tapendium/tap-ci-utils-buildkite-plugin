@@ -41,6 +41,9 @@ publish_npm_package=$PWD/bin/publish-npm-package
 	unstub npm
 }
 
+# TODO Fix flaky tests
+# https://benieworldwide.atlassian.net/browse/LIBS-365
+
 # @test "publish-npm-package handles unpublished packages" {
 # 	stub npm "view . name : echo test-package"
 # 	stub npm "view test-package dist.shasum : exit 1"
