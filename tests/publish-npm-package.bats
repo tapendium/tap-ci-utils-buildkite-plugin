@@ -26,7 +26,7 @@ publish_npm_package=$PWD/bin/publish-npm-package
 }
 
 @test "publish-npm-package runs to completion" {
-	stub npm "view . name : echo test-package"
+	stub jq "--raw-output .name package.json : echo test-package"
 	stub npm "view test-package dist.shasum : echo remote-shasum"
 	stub npm "publish --dry-run --json : echo local-shasum"
 	stub npm "view test-package version : echo remote-version"
@@ -45,7 +45,7 @@ publish_npm_package=$PWD/bin/publish-npm-package
 # https://benieworldwide.atlassian.net/browse/LIBS-365
 
 # @test "publish-npm-package handles unpublished packages" {
-# 	stub npm "view . name : echo test-package"
+# 	stub jq "--raw-output .name package.json : echo test-package"
 # 	stub npm "view test-package dist.shasum : exit 1"
 # 	stub npm "publish --dry-run --json : echo local-shasum"
 # 	stub npm "view test-package version : exit 1"
@@ -61,7 +61,7 @@ publish_npm_package=$PWD/bin/publish-npm-package
 # }
 
 # @test "publish-npm-package supports an optional -n dry-run option" {
-# 	stub npm "view . name : echo test-package"
+# 	stub jq "--raw-output .name package.json : echo test-package"
 # 	stub npm "view test-package dist.shasum : echo remote-shasum"
 # 	stub npm "publish --dry-run --json : echo local-shasum"
 # 	stub npm "view test-package version : echo remote-version"
@@ -84,7 +84,7 @@ publish_npm_package=$PWD/bin/publish-npm-package
 # }
 
 # @test "publish-npm-package supports an optional -r use-remote option" {
-# 	stub npm "view . name : echo test-package"
+# 	stub jq "--raw-output .name package.json : echo test-package"
 # 	stub npm "view test-package dist.shasum : echo remote-shasum"
 # 	stub npm "publish --dry-run --json : echo local-shasum"
 # 	stub npm "view test-package version : echo remote-version"
@@ -101,7 +101,7 @@ publish_npm_package=$PWD/bin/publish-npm-package
 # }
 
 # @test "-r options handles unpublished packages" {
-# 	stub npm "view . name : echo test-package"
+# 	stub jq "--raw-output .name package.json : echo test-package"
 # 	stub npm "view test-package dist.shasum : exit 1"
 # 	stub npm "publish --dry-run --json : echo local-shasum"
 # 	stub npm "view test-package version : exit 1"

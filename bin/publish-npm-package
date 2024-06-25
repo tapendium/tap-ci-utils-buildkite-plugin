@@ -48,7 +48,7 @@ done
 shift $((OPTIND - 1))
 
 new_version=${1:-patch}
-package_name="$(npm view . name)"
+package_name="$(jq --raw-output .name package.json)"
 remote_hash="$(npm view "${package_name}" dist.shasum 2>/dev/null || echo NOT_FOUND)"
 local_hash="$(npm publish --dry-run --json 2>/dev/null | jq --raw-output '.shasum')"
 if [ "${local_hash}" = "${remote_hash}" ]; then

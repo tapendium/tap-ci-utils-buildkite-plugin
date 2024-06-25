@@ -12,7 +12,7 @@ Publish languages.json file to EventBridge
 steps:
   - command: publish-languages event_bus_name service_name user_id event_detail_type
     plugins:
-      - tapendium/tap-ci-utils#v0.7.0: ~
+      - tapendium/tap-ci-utils#v0.7.1: ~
 ```
 
 ```yml
@@ -28,7 +28,7 @@ steps:
       PUBLISH_LANGUAGES_EVENT_USER_ID: userid
       PUBLISH_LANGUAGES_DETAIL_TYPE: languages.updated
     plugins:
-      - tapendium/tap-ci-utils#v0.7.0: ~
+      - tapendium/tap-ci-utils#v0.7.1: ~
 ```
 
 ### publish-features
@@ -39,7 +39,7 @@ Publish features.json file to EventBridge
 steps:
   - command: publish-features event_bus_name service_name user_id event_detail_type
     plugins:
-      - tapendium/tap-ci-utils#v0.7.0: ~
+      - tapendium/tap-ci-utils#v0.7.1: ~
 ```
 
 ```yml
@@ -51,7 +51,7 @@ steps:
       PUBLISH_FEATURES_EVENT_USER_ID: userid
       PUBLISH_FEATURES_DETAIL_TYPE: features.updated
     plugins:
-      - tapendium/tap-ci-utils#v0.7.0: ~
+      - tapendium/tap-ci-utils#v0.7.1: ~
 ```
 
 ### validate-features
@@ -62,7 +62,7 @@ Validate features.json matches expected format
 steps:
   - command: validate-features
     plugins:
-      - tapendium/tap-ci-utils#v0.7.0: ~
+      - tapendium/tap-ci-utils#v0.7.1: ~
 ```
 
 ### Deploy-websocket
@@ -77,7 +77,7 @@ steps:
       API_GATEWAY_WEBSOCKETAPIID: apigatewayID
       DESCRIPTION: description
     plugins:
-      - tapendium/tap-ci-utils#v0.7.0: ~
+      - tapendium/tap-ci-utils#v0.7.1: ~
 ```
 
 ### install-npm-packages
@@ -90,7 +90,7 @@ steps:
       - cd backend
       - install-npm-packages
     plugins:
-      - tapendium/tap-ci-utils#v0.7.0: ~
+      - tapendium/tap-ci-utils#v0.7.1: ~
 ```
 
 ### hash-dir
@@ -102,7 +102,7 @@ steps:
   - commands:
       - hash-dir frontend
     plugins:
-      - tapendium/tap-ci-utils#v0.7.0: ~
+      - tapendium/tap-ci-utils#v0.7.1: ~
 ```
 
 ### publish-npm-package
@@ -117,7 +117,7 @@ steps:
       - cd lib
       - publish-npm-package
     plugins:
-      - tapendium/tap-ci-utils#v0.7.0: ~
+      - tapendium/tap-ci-utils#v0.7.1: ~
 ```
 
 **Publish a major version**
@@ -128,7 +128,7 @@ steps:
       - cd lib
       - publish-npm-package major
     plugins:
-      - tapendium/tap-ci-utils#v0.7.0: ~
+      - tapendium/tap-ci-utils#v0.7.1: ~
 ```
 
 **Dry run package publish of minor version**
@@ -139,7 +139,7 @@ steps:
       - cd lib
       - publish-npm-package -n minor
     plugins:
-      - tapendium/tap-ci-utils#v0.7.0: ~
+      - tapendium/tap-ci-utils#v0.7.1: ~
 ```
 
 **Publish a patch version based on the remote package version**
@@ -152,5 +152,5 @@ steps:
       - cd lib
       - publish-npm-package -r
     plugins:
-      - tapendium/tap-ci-utils#v0.7.0: ~
+      - tapendium/tap-ci-utils#v0.7.1: ~
 ```
