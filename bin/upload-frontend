@@ -1,0 +1,90 @@
+#!/usr/bin/env bash
+
+set -eo pipefail
+
+if [[ "${TAP_CI_ARGS_UPLOAD_FRONTEND_DEBUG:-false}" =~ (true|on|1) ]]; then
+	echo "~~~ :hammer: Enabling debug mode"
+	set -x
+fi
+
+# Echo to standard error
+function log {
+	echo "$@" 1>&2
+}
+
+# Re-export variables passed into plugin as local variables
+function collect_args() {
+	local prefix="TAP_CI_ARGS_UPLOAD_FRONTEND_"
+	local prefix_length="${#prefix}"
+
+	while IFS='=' read -r name value; do
+		if [[ $name == "$prefix"* ]]; then
+			local new_var_name="${name:$prefix_length}"
+			declare -rg "$new_var_name"="$value"
+		fi
+	done < <(env | sort)
+}
+
+collect_args
+
+package_dir="${PACKAGE_DIR:-dist}"
+bucket_name="${BUCKET_NAME?bucket_name is not set}"
+service_name="${SERVICE_NAME?service_name is not set}"
+file_name="${FILE_NAME:-"tapendium-${service_name}.js"}"
+event_bus="${EVENT_BUS?event_bus is not set}"
+event_source="${EVENT_SOURCE:-${service_name}}"
+detail_type="${DETAIL_TYPE?detail_type is not set}"
+dry_run="${DRY_RUN:-false}"
+dir_hash="$(hash-dir "$package_dir")"
+s3_path="${bucket_name}/${service_name}/${dir_hash}"
+
+if ! command -v aws &>/dev/null; then
+	log "aws command not found."
+	exit 1
+fi
+
+if ! command -v jq &>/dev/null; then
+	log "aws command not found."
+	exit 1
+fi
+
+if $dry_run; then
+	log "[DRY RUN] Uploading package to S3 with prefix \"${s3_path}\""
+	aws s3 sync "${package_dir}" "s3://${s3_path}" --dryrun
+else
+	log "Uploading package to S3 with prefix \"${s3_path}\""
+	aws s3 sync "${package_dir}" "s3://${s3_path}"
+fi
+
+log "Reading MFE route configuration"
+if [ -f "route-config.json" ]; then
+	log "Found route-config.json."
+	route_config="$(jq . route-config.json)"
+fi
+
+event_detail="$(
+	jq --null-input --compact-output \
+		--arg service "${service_name}" \
+		--arg path "${service_name}/${dir_hash}" \
+		--argjson route "${route_config:-null}" \
+		--arg fileName "${file_name}" \
+		'{data: {name: $service, path: $path, routeConfig: $route, fileName: $fileName}}'
+)"
+
+event="$(
+	jq --null-input --compact-output \
+		--arg detail "${event_detail}" \
+		--arg detailType "${detail_type}" \
+		--arg source "${event_source}" \
+		--arg bus "${event_bus}" \
+		'{Entries:[{Source: $source, DetailType: $detailType, Detail: $detail, EventBusName: $bus}]}'
+)"
+
+if $dry_run; then
+	log "[DRY RUN] Putting event to EventBridge"
+	log "[DRY RUN] Payload"
+	log "${event}"
+else
+	log "Putting event to EventBridge"
+	aws events put-events --entries "${event}" --output json
+fi

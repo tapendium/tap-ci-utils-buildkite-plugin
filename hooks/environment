@@ -5,4 +5,20 @@ set -euo pipefail
 
 HOOKS_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
+# Re-export plugin env variables to make available for other hooks and command
+# step
+function reexport_env_vars() {
+	local prefix="BUILDKITE_PLUGIN_TAP_CI_UTILS_"
+	local prefix_length="${#prefix}"
+
+	while IFS='=' read -r name value; do
+		if [[ $name == "$prefix"* ]]; then
+			local new_var_name="TAP_CI_ARGS_${name:$prefix_length}"
+			export "$new_var_name"="$value"
+		fi
+	done < <(env | sort)
+}
+
+reexport_env_vars
+
 export PATH="$PATH:$HOOKS_DIR/../bin"

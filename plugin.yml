@@ -1,10 +1,20 @@
-name: Tapendium CI utils 
+name: Tapendium CI utils
 description: CI utility functions
+author: https://tapendium.com
 requirements:
   - aws
   - jq
 configuration:
-  properties:
-    debug:
-      type: string
-      description: Enable debug mode
+  patternProperties:
+    ^[a-z_]+$:
+      type: object
+      patternProperties:
+        ^[a-z_]+$:
+          anyOf:
+            - type: string
+            - type: boolean
+            - type: number
+      additionalProperties: false
+      description: Arbitrary argument(s) required for utils
+  additionalProperties: false
+  properties: {}
