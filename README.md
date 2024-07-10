@@ -12,7 +12,7 @@ Publish languages.json file to EventBridge
 steps:
   - command: publish-languages event_bus_name service_name user_id event_detail_type
     plugins:
-      - tapendium/tap-ci-utils#v0.7.1: ~
+      - tapendium/tap-ci-utils#v0.8.0: ~
 ```
 
 ```yml
@@ -28,7 +28,7 @@ steps:
       PUBLISH_LANGUAGES_EVENT_USER_ID: userid
       PUBLISH_LANGUAGES_DETAIL_TYPE: languages.updated
     plugins:
-      - tapendium/tap-ci-utils#v0.7.1: ~
+      - tapendium/tap-ci-utils#v0.8.0: ~
 ```
 
 ### publish-features
@@ -39,7 +39,7 @@ Publish features.json file to EventBridge
 steps:
   - command: publish-features event_bus_name service_name user_id event_detail_type
     plugins:
-      - tapendium/tap-ci-utils#v0.7.1: ~
+      - tapendium/tap-ci-utils#v0.8.0: ~
 ```
 
 ```yml
@@ -51,7 +51,7 @@ steps:
       PUBLISH_FEATURES_EVENT_USER_ID: userid
       PUBLISH_FEATURES_DETAIL_TYPE: features.updated
     plugins:
-      - tapendium/tap-ci-utils#v0.7.1: ~
+      - tapendium/tap-ci-utils#v0.8.0: ~
 ```
 
 ### validate-features
@@ -62,7 +62,7 @@ Validate features.json matches expected format
 steps:
   - command: validate-features
     plugins:
-      - tapendium/tap-ci-utils#v0.7.1: ~
+      - tapendium/tap-ci-utils#v0.8.0: ~
 ```
 
 ### Deploy-websocket
@@ -77,7 +77,7 @@ steps:
       API_GATEWAY_WEBSOCKETAPIID: apigatewayID
       DESCRIPTION: description
     plugins:
-      - tapendium/tap-ci-utils#v0.7.1: ~
+      - tapendium/tap-ci-utils#v0.8.0: ~
 ```
 
 ### install-npm-packages
@@ -90,7 +90,7 @@ steps:
       - cd backend
       - install-npm-packages
     plugins:
-      - tapendium/tap-ci-utils#v0.7.1: ~
+      - tapendium/tap-ci-utils#v0.8.0: ~
 ```
 
 ### hash-dir
@@ -102,7 +102,7 @@ steps:
   - commands:
       - hash-dir frontend
     plugins:
-      - tapendium/tap-ci-utils#v0.7.1: ~
+      - tapendium/tap-ci-utils#v0.8.0: ~
 ```
 
 ### publish-npm-package
@@ -117,7 +117,7 @@ steps:
       - cd lib
       - publish-npm-package
     plugins:
-      - tapendium/tap-ci-utils#v0.7.1: ~
+      - tapendium/tap-ci-utils#v0.8.0: ~
 ```
 
 **Publish a major version**
@@ -128,7 +128,7 @@ steps:
       - cd lib
       - publish-npm-package major
     plugins:
-      - tapendium/tap-ci-utils#v0.7.1: ~
+      - tapendium/tap-ci-utils#v0.8.0: ~
 ```
 
 **Dry run package publish of minor version**
@@ -139,7 +139,7 @@ steps:
       - cd lib
       - publish-npm-package -n minor
     plugins:
-      - tapendium/tap-ci-utils#v0.7.1: ~
+      - tapendium/tap-ci-utils#v0.8.0: ~
 ```
 
 **Publish a patch version based on the remote package version**
@@ -152,5 +152,28 @@ steps:
       - cd lib
       - publish-npm-package -r
     plugins:
-      - tapendium/tap-ci-utils#v0.7.1: ~
+      - tapendium/tap-ci-utils#v0.8.0: ~
+```
+
+### upload-frontend
+
+Upload a js bundle to S3 using aws S3 sync and publish event to EventBridge with details
+
+```yml
+steps:
+  - commands: upload-frontend
+    plugins:
+      - tapendium/tap-ci-utils#v0.8.0:
+          upload_frontend:
+            # Required fields
+            service_name: service-name
+            bucket_name: frontend-bucket
+            event_bus: eventbus-name
+            detail_type: detail-type-in-eb-message
+
+            # Optional
+            package_dir: dist
+            event_source: ${service_name}
+            file_name: tapendium-${service_name}.js
+            dry_run: false
 ```
