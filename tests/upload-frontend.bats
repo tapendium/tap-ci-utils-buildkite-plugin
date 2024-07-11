@@ -7,7 +7,7 @@ setup() {
 	export AWS_STUB_DEBUG=/dev/tty
 
 	# Uncomment to enable plugin debugging
-	#export BUILDKITE_PLUGIN_TAP_CI_UTILS_DEBUG=true
+	export BUILDKITE_PLUGIN_TAP_CI_UTILS_DEBUG=true
 }
 
 upload_frontend=$PWD/bin/upload-frontend
@@ -40,7 +40,8 @@ function aws() {
 	export TAP_CI_ARGS_UPLOAD_FRONTEND_SERVICE_NAME="service"
 	export TAP_CI_ARGS_UPLOAD_FRONTEND_EVENT_BUS="eventBus"
 	export TAP_CI_ARGS_UPLOAD_FRONTEND_DRY_RUN="true"
-	export TAP_CI_ARGS_UPLOAD_FRONTEND_DETAIL_TYPE="build-completed"
+	export BUILD_TYPE="build-completed"
+	export TAP_CI_ARGS_UPLOAD_FRONTEND_DETAIL_TYPE="\$BUILD_TYPE"
 
 	run $upload_frontend
 	assert_success
