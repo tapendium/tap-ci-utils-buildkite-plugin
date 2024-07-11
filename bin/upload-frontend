@@ -22,6 +22,7 @@ function expandVariable() {
 	fi
 }
 
+printenv
 # Re-export variables passed into plugin as local variables
 function collect_args() {
 	local prefix="TAP_CI_ARGS_UPLOAD_FRONTEND_"
@@ -30,7 +31,8 @@ function collect_args() {
 	while IFS='=' read -r name value; do
 		if [[ $name == "$prefix"* ]]; then
 			local new_var_name="${name:$prefix_length}"
-			declare -rg "$new_var_name"="$(expandVariable "${value}")"
+			local resolved_value=$(expandVariable "${value}")
+			declare -rg "$new_var_name"="$resolved_value"
 		fi
 	done < <(env | sort)
 }
