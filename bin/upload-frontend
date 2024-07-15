@@ -87,7 +87,7 @@ event="$(
 		--arg detailType "${detail_type}" \
 		--arg source "${event_source}" \
 		--arg bus "${event_bus}" \
-		'{Entries:[{Source: $source, DetailType: $detailType, Detail: $detail, EventBusName: $bus}]}'
+		'[{Source: $source, DetailType: $detailType, Detail: $detail, EventBusName: $bus}]'
 )"
 
 if $dry_run; then
