@@ -1,0 +1,51 @@
+#!/usr/bin/env bash
+
+set -eo pipefail
+
+if [[ "${TAP_CI_ARGS_SETUP_DEBUG:-false}" =~ (true|on|1) ]]; then
+	echo "~~~ :hammer: Enabling debug mode"
+	set -x
+fi
+
+# Echo to standard error
+function log {
+	echo "$@" 1>&2
+}
+
+# Expand variable if it starts with $ sign
+function expandVariable() {
+	if [[ "${1::1}" == "\$" ]]; then
+		local varName=${1:1}
+		echo "${!varName}"
+	else
+		echo "${1}"
+	fi
+}
+
+# Re-export variables passed into plugin as local variables
+function collect_args() {
+	local prefix="TAP_CI_ARGS_SETUP_"
+	local prefix_length="${#prefix}"
+
+	while IFS='=' read -r name value; do
+		if [[ $name == "$prefix"* ]]; then
+			local new_var_name="${name:$prefix_length}"
+			declare -rg "$new_var_name"="$(expandVariable "${value}")"
+		fi
+	done < <(env | sort)
+}
+
+collect_args
+
+working_dir="${WORKING_DIR:-}"
+install_tools="${INSTALL_TOOLS:-true}"
+
+if [ -n "${working_dir}" ]; then
+	log "--- Changing working directory to ${working_dir}"
+	cd "${working_dir}"
+fi
+
+if $install_tools; then
+	log "Installing required tools"
+	mise install
+fi
