@@ -59,7 +59,7 @@ fi
 remote_version="$(npm view "${package_name}" version 2>/dev/null || echo '')"
 if [ -n "$remote_version" ] && $use_remote; then
 	log "Using remote version \"${remote_version}\" as base."
-	npm version "${remote_version}"
+	npm version "${remote_version}" 2>/dev/null || log "Warning - Unable to set local version to ${remote_version}"
 fi
 
 npm version "${new_version}" &>/dev/null
