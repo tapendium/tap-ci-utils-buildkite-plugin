@@ -12,23 +12,22 @@ Publish languages.json file to EventBridge
 steps:
   - command: publish-languages event_bus_name service_name user_id event_detail_type
     plugins:
-      - tapendium/tap-ci-utils#v0.9.1: ~
+      - tapendium/tap-ci-utils#v0.9.2: ~
 ```
 
 ```yml
 steps:
   - command: publish-languages
-    env:
-      # optional defaults to frontend/locale/en.json
-      PUBLISH_LANGUAGES_FILE_PATH: en.json
-      # optional defaults to en
-      PUBLISH_LANGUAGES_LANGUAGE_CODE: en
-      PUBLISH_LANGUAGES_EVENT_BUS_NAME: busname
-      # service_name is inferred from repo URL
-      PUBLISH_LANGUAGES_EVENT_USER_ID: userid
-      PUBLISH_LANGUAGES_DETAIL_TYPE: languages.updated
     plugins:
-      - tapendium/tap-ci-utils#v0.9.1: ~
+      - tapendium/tap-ci-utils#v0.9.2:
+          publish_languages:
+            file_path: en.json # defaults to frontend/locale/en.json
+            language_code: en # defaults to en
+            service_name: name # inferred from repo URL
+            # Required fields
+            user_id: user_id
+            event_bus: eventbus-name
+            detail_type: detail-type-in-eb-message
 ```
 
 ### publish-features
@@ -39,7 +38,7 @@ Publish features.json file to EventBridge
 steps:
   - command: publish-features event_bus_name service_name user_id event_detail_type
     plugins:
-      - tapendium/tap-ci-utils#v0.9.1: ~
+      - tapendium/tap-ci-utils#v0.9.2: ~
 ```
 
 ```yml
@@ -51,7 +50,7 @@ steps:
       PUBLISH_FEATURES_EVENT_USER_ID: userid
       PUBLISH_FEATURES_DETAIL_TYPE: features.updated
     plugins:
-      - tapendium/tap-ci-utils#v0.9.1: ~
+      - tapendium/tap-ci-utils#v0.9.2: ~
 ```
 
 ### validate-features
@@ -62,7 +61,7 @@ Validate features.json matches expected format
 steps:
   - command: validate-features
     plugins:
-      - tapendium/tap-ci-utils#v0.9.1: ~
+      - tapendium/tap-ci-utils#v0.9.2: ~
 ```
 
 ### Deploy-websocket
@@ -77,7 +76,7 @@ steps:
       API_GATEWAY_WEBSOCKETAPIID: apigatewayID
       DESCRIPTION: description
     plugins:
-      - tapendium/tap-ci-utils#v0.9.1: ~
+      - tapendium/tap-ci-utils#v0.9.2: ~
 ```
 
 ### install-npm-packages
@@ -90,7 +89,7 @@ steps:
       - cd backend
       - install-npm-packages
     plugins:
-      - tapendium/tap-ci-utils#v0.9.1: ~
+      - tapendium/tap-ci-utils#v0.9.2: ~
 ```
 
 ### hash-dir
@@ -102,7 +101,7 @@ steps:
   - commands:
       - hash-dir frontend
     plugins:
-      - tapendium/tap-ci-utils#v0.9.1: ~
+      - tapendium/tap-ci-utils#v0.9.2: ~
 ```
 
 ### publish-npm-package
@@ -117,7 +116,7 @@ steps:
       - cd lib
       - publish-npm-package
     plugins:
-      - tapendium/tap-ci-utils#v0.9.1: ~
+      - tapendium/tap-ci-utils#v0.9.2: ~
 ```
 
 **Publish a major version**
@@ -128,7 +127,7 @@ steps:
       - cd lib
       - publish-npm-package major
     plugins:
-      - tapendium/tap-ci-utils#v0.9.1: ~
+      - tapendium/tap-ci-utils#v0.9.2: ~
 ```
 
 **Dry run package publish of minor version**
@@ -139,7 +138,7 @@ steps:
       - cd lib
       - publish-npm-package -n minor
     plugins:
-      - tapendium/tap-ci-utils#v0.9.1: ~
+      - tapendium/tap-ci-utils#v0.9.2: ~
 ```
 
 **Publish a patch version based on the remote package version**
@@ -152,7 +151,7 @@ steps:
       - cd lib
       - publish-npm-package -r
     plugins:
-      - tapendium/tap-ci-utils#v0.9.1: ~
+      - tapendium/tap-ci-utils#v0.9.2: ~
 ```
 
 ### upload-frontend
@@ -163,7 +162,7 @@ Upload a js bundle to S3 using aws S3 sync and publish event to EventBridge with
 steps:
   - commands: upload-frontend
     plugins:
-      - tapendium/tap-ci-utils#v0.9.1:
+      - tapendium/tap-ci-utils#v0.9.2:
           upload_frontend:
             # Required fields
             service_name: service-name
@@ -186,7 +185,7 @@ Change the working directory for subsequent commands and optionally install spec
 steps:
   - commands: npm test
     plugins:
-      - tapendium/tap-ci-utils#v0.9.1:
+      - tapendium/tap-ci-utils#v0.9.2:
           setup:
             working_dir: backend
             install_tools: false # Defaults to true

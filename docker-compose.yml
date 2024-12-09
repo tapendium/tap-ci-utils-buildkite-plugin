@@ -19,3 +19,12 @@ services:
     command:
       - --diff
       - ./data
+
+  shellcheck:
+    image: koalaman/shellcheck-alpine
+    volumes:
+      - $PWD:/mnt:ro
+    command:
+      - '/bin/sh'
+      - '-c'
+      - 'shellcheck /mnt/bin/* /mnt/hooks/*'
