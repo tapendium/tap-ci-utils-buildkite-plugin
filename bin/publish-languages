@@ -47,13 +47,7 @@ function get_service_name() {
 	echo "${BASH_REMATCH[1]}"
 }
 
-languages_file_path=${FILE_PATH:-"frontend/locale/en.json"}
-
-if [ ! -f "${languages_file_path}" ]; then
-	echo "${languages_file_path} not found."
-	exit 1
-fi
-
+languages_file_path=${FILE_PATH?"frontend/locale/en.json"}
 service_name_guess="${SERVICE_NAME:-$(get_service_name)}"
 service_name=${service_name_guess}
 event_bus="${EVENT_BUS?event_bus is not set}"
