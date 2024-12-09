@@ -30,13 +30,15 @@ teardown() {
 
 publish_languages=$PWD/bin/publish-languages
 
-@test "publish-languages runs to completion" {
+@test "publish-languages runs successfully" {
 	stub aws "$(cat ./tests/fixtures/put-events-input-args-languages.stub) : cat ./tests/fixtures/put-events-success.json"
 	export BUILDKITE_REPO="git@github.com:org/service-name.git"
-	export PUBLISH_LANGUAGES_FILE_PATH="en.json"
-	export PUBLISH_LANGUAGES_EVENT_BUS_NAME="eventbusnameorarn"
-	export PUBLISH_LANGUAGES_EVENT_USER_ID="abc123"
-	export PUBLISH_LANGUAGES_DETAIL_TYPE="languages.updated"
+	export TAP_CI_ARGS_PUBLISH_LANGUAGES_DEBUG=true
+	export TAP_CI_ARGS_PUBLISH_LANGUAGES_FILE_PATH="en.json"
+	export TAP_CI_ARGS_PUBLISH_LANGUAGES_SERVICE_NAME="service-name"
+	export TAP_CI_ARGS_PUBLISH_LANGUAGES_EVENT_BUS="eventbusnameorarn"
+	export TAP_CI_ARGS_PUBLISH_LANGUAGES_DETAIL_TYPE="languages.updated"
+	export TAP_CI_ARGS_PUBLISH_LANGUAGES_USER_ID="abc123"
 	run $publish_languages
 
 	assert_success
@@ -48,10 +50,12 @@ publish_languages=$PWD/bin/publish-languages
 @test "publish-languages handles eventbridge failures" {
 	stub aws "$(cat ./tests/fixtures/put-events-input-args-languages.stub) : cat ./tests/fixtures/put-events-failure.json"
 	export BUILDKITE_REPO="git@github.com:org/service-name.git"
-	export PUBLISH_LANGUAGES_FILE_PATH="en.json"
-	export PUBLISH_LANGUAGES_EVENT_BUS_NAME="eventbusnameorarn"
-	export PUBLISH_LANGUAGES_EVENT_USER_ID="abc123"
-	export PUBLISH_LANGUAGES_DETAIL_TYPE="languages.updated"
+	export TAP_CI_ARGS_PUBLISH_LANGUAGES_DEBUG=true
+	export TAP_CI_ARGS_PUBLISH_LANGUAGES_FILE_PATH="en.json"
+	export TAP_CI_ARGS_PUBLISH_LANGUAGES_SERVICE_NAME="service-name"
+	export TAP_CI_ARGS_PUBLISH_LANGUAGES_EVENT_BUS="eventbusnameorarn"
+	export TAP_CI_ARGS_PUBLISH_LANGUAGES_DETAIL_TYPE="languages.updated"
+	export TAP_CI_ARGS_PUBLISH_LANGUAGES_USER_ID="abc123"
 	run $publish_languages
 
 	assert_failure
