@@ -12,14 +12,14 @@ Publish languages.json file to EventBridge
 steps:
   - command: publish-languages event_bus_name service_name user_id event_detail_type
     plugins:
-      - tapendium/tap-ci-utils#v0.10.1: ~
+      - tapendium/tap-ci-utils#v0.11.0: ~
 ```
 
 ```yml
 steps:
   - command: publish-languages
     plugins:
-      - tapendium/tap-ci-utils#v0.10.1:
+      - tapendium/tap-ci-utils#v0.11.0:
           publish_languages:
             file_path: en.json # defaults to frontend/locale/en.json
             language_code: en # defaults to en
@@ -38,7 +38,7 @@ Publish features.json file to EventBridge
 steps:
   - command: publish-features event_bus_name service_name user_id event_detail_type
     plugins:
-      - tapendium/tap-ci-utils#v0.10.1: ~
+      - tapendium/tap-ci-utils#v0.11.0: ~
 ```
 
 ```yml
@@ -50,7 +50,7 @@ steps:
       PUBLISH_FEATURES_EVENT_USER_ID: userid
       PUBLISH_FEATURES_DETAIL_TYPE: features.updated
     plugins:
-      - tapendium/tap-ci-utils#v0.10.1: ~
+      - tapendium/tap-ci-utils#v0.11.0: ~
 ```
 
 ### validate-features
@@ -61,7 +61,7 @@ Validate features.json matches expected format
 steps:
   - command: validate-features
     plugins:
-      - tapendium/tap-ci-utils#v0.10.1: ~
+      - tapendium/tap-ci-utils#v0.11.0: ~
 ```
 
 ### Deploy-websocket
@@ -76,7 +76,7 @@ steps:
       API_GATEWAY_WEBSOCKETAPIID: apigatewayID
       DESCRIPTION: description
     plugins:
-      - tapendium/tap-ci-utils#v0.10.1: ~
+      - tapendium/tap-ci-utils#v0.11.0: ~
 ```
 
 ### install-npm-packages
@@ -89,7 +89,7 @@ steps:
       - cd backend
       - install-npm-packages
     plugins:
-      - tapendium/tap-ci-utils#v0.10.1: ~
+      - tapendium/tap-ci-utils#v0.11.0: ~
 ```
 
 ### hash-dir
@@ -101,7 +101,7 @@ steps:
   - commands:
       - hash-dir frontend
     plugins:
-      - tapendium/tap-ci-utils#v0.10.1: ~
+      - tapendium/tap-ci-utils#v0.11.0: ~
 ```
 
 ### publish-npm-package
@@ -116,7 +116,7 @@ steps:
       - cd lib
       - publish-npm-package
     plugins:
-      - tapendium/tap-ci-utils#v0.10.1: ~
+      - tapendium/tap-ci-utils#v0.11.0: ~
 ```
 
 **Publish a major version**
@@ -127,7 +127,7 @@ steps:
       - cd lib
       - publish-npm-package major
     plugins:
-      - tapendium/tap-ci-utils#v0.10.1: ~
+      - tapendium/tap-ci-utils#v0.11.0: ~
 ```
 
 **Dry run package publish of minor version**
@@ -138,7 +138,7 @@ steps:
       - cd lib
       - publish-npm-package -n minor
     plugins:
-      - tapendium/tap-ci-utils#v0.10.1: ~
+      - tapendium/tap-ci-utils#v0.11.0: ~
 ```
 
 **Publish a patch version based on the remote package version**
@@ -151,7 +151,7 @@ steps:
       - cd lib
       - publish-npm-package -r
     plugins:
-      - tapendium/tap-ci-utils#v0.10.1: ~
+      - tapendium/tap-ci-utils#v0.11.0: ~
 ```
 
 ### upload-frontend
@@ -162,7 +162,7 @@ Upload a js bundle to S3 using aws S3 sync and publish event to EventBridge with
 steps:
   - commands: upload-frontend
     plugins:
-      - tapendium/tap-ci-utils#v0.10.1:
+      - tapendium/tap-ci-utils#v0.11.0:
           upload_frontend:
             # Required fields
             service_name: service-name
@@ -177,6 +177,37 @@ steps:
             dry_run: false
 ```
 
+### param-exists
+
+Check is an AWS parameter with the specified name exists. Returns a 0 exit code if exists or non-zero otherwise.
+
+```yml
+steps:
+  - commands: param-exists /some/parameter/name
+    plugins:
+      - tapendium/tap-ci-utils#v0.11.0: ~
+```
+
+### put-param
+
+Create/update an AWS parameter.
+
+```yml
+steps:
+  - commands: put-param /some/parameter/name some-value
+    plugins:
+      - tapendium/tap-ci-utils#v0.11.0: ~
+```
+
+**Specify the parameter type**
+
+```yml
+steps:
+  - commands: put-param /some/list a,b,c StringList
+    plugins:
+      - tapendium/tap-ci-utils#v0.11.0: ~
+```
+
 ## Pre command setup
 
 Change the working directory for subsequent commands and optionally install specified tools using [mise-en-place](https://mise.jdx.dev/).
@@ -185,7 +216,7 @@ Change the working directory for subsequent commands and optionally install spec
 steps:
   - commands: npm test
     plugins:
-      - tapendium/tap-ci-utils#v0.10.1:
+      - tapendium/tap-ci-utils#v0.11.0:
           setup:
             working_dir: backend
             install_tools: false # Defaults to true
