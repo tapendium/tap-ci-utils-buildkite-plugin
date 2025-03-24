@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+
+set -eo pipefail
+
+if [[ "${BUILDKITE_PLUGIN_TAP_CI_UTILS_DEBUG:-false}" =~ (true|on|1) ]]; then
+	echo "~~~ :hammer: Enabling debug mode"
+	set -x
+fi
+
+# Echo to standard error
+function log {
+	echo "$@" 1>&2
+}
+
+# Create/update an AWS parameter
+# Requires ssm:PutParameter permission and will overwrite existing parameter value
+function put_param() {
+	local param_name="$1"
+	local param_value="$2"
+	local param_type="${3?Parameter type is not set}"
+
+	aws ssm put-parameter \
+		--name "$param_name" \
+		--value "$param_value" \
+		--type "$param_type" \
+		--overwrite
+}
+
+parameter_name=${1?Parameter name is not set}
+param_value=${2:?Parameter value is not set}
+param_type="${3:-String}"
+
+put_param "${parameter_name}" "${param_value}" "${param_type}"
