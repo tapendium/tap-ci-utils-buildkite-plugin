@@ -30,7 +30,7 @@ publish_npm_package=$PWD/bin/publish-npm-package
 	stub npm "view test-package dist.shasum : echo remote-shasum"
 	stub npm "publish --dry-run --json : echo local-shasum"
 	stub npm "view test-package version : echo remote-version"
-	stub jq "--raw-output '.shasum' : echo local-shasum"
+	stub jq "--raw-output '.. | objects | .shasum // empty' : echo local-shasum"
 	stub npm "version patch : echo npm-version"
 	stub npm "publish : echo package-published"
 
