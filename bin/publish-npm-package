@@ -50,7 +50,7 @@ shift $((OPTIND - 1))
 new_version=${1:-patch}
 package_name="$(jq --raw-output .name package.json)"
 remote_hash="$(npm view "${package_name}" dist.shasum 2>/dev/null || echo NOT_FOUND)"
-local_hash="$(npm publish --dry-run --json 2>/dev/null | jq --raw-output '.shasum')"
+local_hash="$(npm publish --dry-run --json 2>/dev/null | jq --raw-output '.. | objects | .shasum // empty')"
 if [ "${local_hash}" = "${remote_hash}" ]; then
 	log "Package \"${package_name}\" with shasum ${local_hash} is already published."
 	exit 0
