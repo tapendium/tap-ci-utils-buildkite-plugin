@@ -2,7 +2,7 @@
 
 set -eo pipefail
 
-if [[ "${BUILDKITE_PLUGIN_TAP_CI_UTILS_DEBUG:-false}" =~ (true|on|1) ]]; then
+if [[ "${TAP_CI_ARGS_PUBLISH_NPM_PACKAGE_DEBUG:-false}" =~ (true|on|1) ]]; then
 	echo "~~~ :hammer: Enabling debug mode"
 	set -x
 fi
@@ -12,22 +12,52 @@ function log() {
 	echo "$@" 1>&2
 }
 
+# Expand variable if it starts with $ sign
+function expandVariable() {
+	if [[ "${1::1}" == "\$" ]]; then
+		local varName=${1:1}
+		echo "${!varName}"
+	else
+		echo "${1}"
+	fi
+}
+
+# Re-export variables passed into plugin as local variables
+function collect_args() {
+	local prefix="TAP_CI_ARGS_PUBLISH_NPM_PACKAGE_"
+	local prefix_length="${#prefix}"
+
+	while IFS='=' read -r name value; do
+		if [[ $name == "$prefix"* ]]; then
+			local new_var_name="${name:$prefix_length}"
+			declare -rg "$new_var_name"="$(expandVariable "${value}")"
+		fi
+	done < <(env | sort)
+}
+
+collect_args
+
 if [ ! -f package.json ]; then
 	log "ERROR: No package.json file found."
 	exit 1
 fi
 
 # Run `npm publish` in dry run mode.
-dry_run=false
+dry_run="${DRY_RUN:-false}"
 
 # Use remote version of package as base when incrementing version.
-use_remote=false
+use_remote="${USE_REMOTE:-false}"
 
+# Get new_version from environment or default to 'patch'
+new_version="${NEW_VERSION:-patch}"
+
+# Handle command line arguments for backward compatibility
 # Function to display usage information
 usage() {
-	log "Usage: $0 [-n] [-r]"
+	log "Usage: $0 [-n] [-r] [version]"
 	log "  -n      Enable dry run mode"
 	log "  -r      Use remote version as base version when incrementing"
+	log "  version Version bump type (patch, minor, major, etc.)"
 }
 
 while getopts ":nr" opt; do
@@ -47,7 +77,10 @@ while getopts ":nr" opt; do
 done
 shift $((OPTIND - 1))
 
-new_version=${1:-patch}
+# Command line arguments override environment variables
+if [ $# -gt 0 ]; then
+	new_version="$1"
+fi
 package_name="$(jq --raw-output .name package.json)"
 remote_hash="$(npm view "${package_name}" dist.shasum 2>/dev/null || echo NOT_FOUND)"
 local_hash="$(npm publish --dry-run --json 2>/dev/null | jq --raw-output '.. | objects | .shasum // empty')"
