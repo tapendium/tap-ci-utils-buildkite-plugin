@@ -41,6 +41,63 @@ publish_npm_package=$PWD/bin/publish-npm-package
 	unstub npm
 }
 
+@test "publish-npm-package uses environment variables for configuration" {
+	export TAP_CI_ARGS_PUBLISH_NPM_PACKAGE_DRY_RUN=true
+	export TAP_CI_ARGS_PUBLISH_NPM_PACKAGE_USE_REMOTE=true
+	export TAP_CI_ARGS_PUBLISH_NPM_PACKAGE_NEW_VERSION=minor
+
+	stub jq "--raw-output .name package.json : echo test-package"
+	stub npm "view test-package dist.shasum : echo remote-shasum"
+	stub npm "publish --dry-run --json : echo local-shasum"
+	stub jq "--raw-output '.. | objects | .shasum // empty' : echo local-shasum"
+	stub npm "view test-package version : echo remote-version"
+	stub npm "version remote-version : echo remote-version"
+	stub npm "version minor : echo npm-version"
+	stub npm "publish --dry-run : echo dry-run-published"
+
+	run $publish_npm_package
+
+	assert_success
+	unstub jq
+	unstub npm
+}
+
+@test "publish-npm-package command line arguments override environment variables" {
+	export TAP_CI_ARGS_PUBLISH_NPM_PACKAGE_DRY_RUN=false
+	export TAP_CI_ARGS_PUBLISH_NPM_PACKAGE_USE_REMOTE=false
+	export TAP_CI_ARGS_PUBLISH_NPM_PACKAGE_NEW_VERSION=patch
+
+	stub jq "--raw-output .name package.json : echo test-package"
+	stub npm "view test-package dist.shasum : echo remote-shasum"
+	stub npm "publish --dry-run --json : echo local-shasum"
+	stub jq "--raw-output '.. | objects | .shasum // empty' : echo local-shasum"
+	stub npm "view test-package version : echo remote-version"
+	stub npm "version major : echo npm-version"
+	stub npm "publish --dry-run : echo dry-run-published"
+
+	run $publish_npm_package -n major
+
+	assert_success
+	unstub jq
+	unstub npm
+}
+
+@test "publish-npm-package uses default values when environment variables are not set" {
+	stub jq "--raw-output .name package.json : echo test-package"
+	stub npm "view test-package dist.shasum : echo remote-shasum"
+	stub npm "publish --dry-run --json : echo local-shasum"
+	stub jq "--raw-output '.. | objects | .shasum // empty' : echo local-shasum"
+	stub npm "view test-package version : echo remote-version"
+	stub npm "version patch : echo npm-version"
+	stub npm "publish : echo package-published"
+
+	run $publish_npm_package
+
+	assert_success
+	unstub jq
+	unstub npm
+}
+
 # TODO Fix flaky tests
 # https://benieworldwide.atlassian.net/browse/LIBS-365
 
