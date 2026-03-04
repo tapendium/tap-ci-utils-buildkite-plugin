@@ -66,6 +66,31 @@ else
 	aws s3 sync "${package_dir}" "s3://${s3_path}"
 fi
 
+# Validate the uploaded file URL returns javascript content type
+if [[ "$dry_run" != "true" ]]; then
+	log "Fetching CloudFront domain from CloudFormation exports"
+	cloudfront_domain=$(aws cloudformation list-exports --query "Exports[?Name=='HostedZoneDomainName'].Value" --output text)
+
+	if [[ -z "$cloudfront_domain" ]]; then
+		log "Error: Could not fetch HostedZoneDomainName from CloudFormation exports"
+		exit 1
+	fi
+
+	log "Validating uploaded resource URL via CloudFront"
+	resource_url="https://${cloudfront_domain}/${service_name}/${dir_hash}/${file_name}"
+	log "Checking CloudFront URL: ${resource_url}"
+
+	content_type=$(curl -sI "${resource_url}" | grep -i "content-type" | awk '{print $2}' | tr -d '\r')
+	log "Response Content-Type: ${content_type}"
+
+	if [[ ! "${content_type}" =~ ^(application/javascript|text/javascript|application/x-javascript) ]]; then
+		log "Error: Expected JavaScript content type (application/javascript or text/javascript), but got: ${content_type}"
+		exit 1
+	fi
+
+	log "URL validation successful"
+fi
+
 log "Reading MFE route configuration"
 if [ -f "route-config.json" ]; then
 	log "Found route-config.json."

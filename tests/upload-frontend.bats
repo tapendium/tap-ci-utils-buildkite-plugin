@@ -13,12 +13,17 @@ setup() {
 upload_frontend=$PWD/bin/upload-frontend
 
 function aws() {
-	echo "stubbed aws"
+	if [[ "$1" == "cloudformation" && "$2" == "list-exports" ]]; then
+		echo "example.com"
+	else
+		echo "stubbed aws"
+	fi
 }
 
 @test "upload-frontend runs successfully" {
 	export -f aws
 	stub hash-dir 'dist : echo directoryhash'
+	stub curl '-sI * : echo "content-type: application/javascript"'
 	export TAP_CI_ARGS_UPLOAD_FRONTEND_PACKAGE_PATH="dist"
 	export TAP_CI_ARGS_UPLOAD_FRONTEND_BUCKET_NAME="bucketName"
 	export TAP_CI_ARGS_UPLOAD_FRONTEND_SERVICE_NAME="service"
@@ -28,8 +33,11 @@ function aws() {
 	run $upload_frontend
 	assert_success
 	assert_output -p "Uploading package to S3"
+	assert_output -p "Fetching CloudFront domain"
+	assert_output -p "Validating uploaded resource URL"
 	refute_output -p "DRY RUN"
 	unstub hash-dir
+	unstub curl
 }
 
 @test "upload-frontend runs handles dry run" {
