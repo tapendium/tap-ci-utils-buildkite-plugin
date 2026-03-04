@@ -45,6 +45,12 @@ event_bus="${EVENT_BUS?event_bus is not set}"
 event_source="${EVENT_SOURCE:-${service_name}}"
 detail_type="${DETAIL_TYPE?detail_type is not set}"
 dry_run="${DRY_RUN:-false}"
+
+# Normalise dry_run to boolean
+dry_run_bool=false
+if [[ "$dry_run" =~ ^(true|on|1|yes)$ ]]; then
+	dry_run_bool=true
+fi
 dir_hash="$(hash-dir "$package_dir")"
 s3_path="${bucket_name}/${service_name}/${dir_hash}"
 
@@ -58,7 +64,7 @@ if ! command -v jq &>/dev/null; then
 	exit 1
 fi
 
-if $dry_run; then
+if $dry_run_bool; then
 	log "[DRY RUN] Uploading package to S3 with prefix \"${s3_path}\""
 	aws s3 sync "${package_dir}" "s3://${s3_path}" --dryrun
 else
@@ -67,7 +73,7 @@ else
 fi
 
 # Validate the uploaded file URL returns javascript content type
-if [[ "$dry_run" != "true" ]]; then
+if ! $dry_run_bool; then
 	log "Fetching CloudFront domain from CloudFormation exports"
 	cloudfront_domain=$(aws cloudformation list-exports --query "Exports[?Name=='HostedZoneDomainName'].Value" --output text)
 
@@ -115,7 +121,7 @@ event="$(
 		'[{Source: $source, DetailType: $detailType, Detail: $detail, EventBusName: $bus}]'
 )"
 
-if $dry_run; then
+if $dry_run_bool; then
 	log "[DRY RUN] Putting event to EventBridge"
 	log "[DRY RUN] Payload"
 	log "${event}"
