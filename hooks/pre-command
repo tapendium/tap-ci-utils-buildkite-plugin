@@ -48,4 +48,5 @@ fi
 if $install_tools; then
 	log "Installing required tools"
 	mise install
+	mise current
 fi

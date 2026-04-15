@@ -16,7 +16,9 @@ pre_command=$PWD/hooks/pre-command
 @test "pre-command runs successfully" {
 	test_dir="$(temp_make)"
 	export TAP_CI_ARGS_SETUP_WORKING_DIR="$test_dir"
-	stub mise "install : echo mise-install"
+	stub mise \
+		"install : echo mise-install" \
+		"current : echo mise-current"
 
 	run $pre_command
 	assert_success
@@ -27,7 +29,9 @@ pre_command=$PWD/hooks/pre-command
 }
 
 @test "pre-command leaves current dir unchanged when working_dir not set" {
-	stub mise "install : echo mise-install"
+	stub mise \
+		"install : echo mise-install" \
+		"current : echo mise-current"
 
 	run $pre_command
 	assert_success
