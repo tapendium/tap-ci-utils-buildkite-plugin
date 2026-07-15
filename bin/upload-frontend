@@ -51,6 +51,11 @@ dry_run_bool=false
 if [[ "$dry_run" =~ ^(true|on|1|yes)$ ]]; then
 	dry_run_bool=true
 fi
+if [[ ! -f "${package_dir}/${file_name}" ]]; then
+	log "Error: file ${file_name} does not exist in ${package_dir}"
+	exit 1
+fi
+
 dir_hash="$(hash-dir "$package_dir")"
 s3_path="${bucket_name}/${service_name}/${dir_hash}"
 
